@@ -12,6 +12,17 @@ pipeline {
                 checkout scm
             }
         }
+        stage("Java Build"){
+            steps {
+                script {
+                    echo "Building Maven project to generate .jar file..."
+                    sh '''
+                        # Ensure Maven is available in the Jenkins container
+                        mvn clean install -DskipTests
+                    '''
+                }
+            }
+        }
         stage("OpenShift build") {
             steps {
                 sh '''

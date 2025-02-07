@@ -14,10 +14,11 @@ pipeline {
         }
         stage("OpenShift build") {
             steps {
-               sh '''
-                    # Start a build using OpenShift's Source-to-Image builder
-                    oc start-build --from-dir=./ --follow --build-config=banking-portal-ui -n priyanshubhargav710-dev
-                '''
+                sh '''
+                       # Trigger a build from source code in the current directory using OpenShift ImageStream
+                       oc new-build --name=banking-portal-ui --binary --strategy=docker -n priyanshubhargav710-dev
+                       oc start-build banking-portal-ui --from-dir=./ --follow -n priyanshubhargav710-dev
+                   '''
             }
         }
         stage("Docker Build") {

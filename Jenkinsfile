@@ -12,6 +12,14 @@ pipeline {
                 checkout scm
             }
         }
+        stage("OpenShift build") {
+            steps {
+               sh '''
+                    # Start a build using OpenShift's Source-to-Image builder
+                    oc start-build --from-dir=./ --follow --build-config=banking-portal-ui -n priyanshubhargav710-dev
+                '''
+            }
+        }
         stage("Docker Build") {
             steps {
                  sh '''

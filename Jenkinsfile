@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'maven'
+    }
 
     stages {
         stage('Hello') {
@@ -7,56 +9,51 @@ pipeline {
                 echo 'Hello World'
             }
         }
-        stage("Checkout") {
+//         stage("Checkout") {
+//             steps {
+//                 checkout scm
+//             }
+//         }
+        stage('Build App') {
             steps {
-                checkout scm
+              git branch: 'main', url: 'https://github.com/asteya710/bananafish-banking-portal-api.git'
+                  script {
+                      def pom = readMavenPom file: 'pom.xml'
+                      version = pom.version
+                  }
+              sh "mvn install"
             }
         }
-        stage("Java Build"){
-            steps {
-                script {
-                echo "Building Maven project to generate .jar file..."
-                   // Use OpenShift's Maven image to run the build
-                   sh '''
-                       oc run maven-build --image=maven:3.8.4-openjdk-11 --overrides='
-                       {
-                         "apiVersion": "v1",
-                         "kind": "Pod",
-                         "metadata": {
-                           "name": "maven-build"
-                         },
-                         "spec": {
-                           "containers": [{
-                             "name": "maven",
-                             "image": "maven:3.8.4-openjdk-11",
-                             "command": ["mvn", "clean", "install", "-DskipTests"],
-                             "workingDir": "/workspace",
-                             "volumeMounts": [{
-                               "mountPath": "/workspace",
-                               "name": "workspace-volume"
-                             }]
-                           }],
-                           "volumes": [{
-                             "name": "workspace-volume",
-                             "hostPath": {
-                               "path": "/tmp/workspace"  // Use workspace directory from Jenkins
-                             }
-                           }]
-                         }
-                       }'
-                       '''
-                    }
+//         stage("OpenShift build") {
+//             steps {
+//                 sh '''
+//                        # Trigger a build from source code in the current directory using OpenShift ImageStream
+//                        oc new-build --name=banking-portal-api --binary --strategy=docker -n priyanshubhargav710-dev
+//                        oc start-build banking-portal-api --from-dir=./ --follow -n priyanshubhargav710-dev
+//                    '''
+//             }
+//         }
+        stage('Create Image Builder') {
+                when {
+                  expression {
+                        openshift.withCluster() {
+                              openshift.withProject() {
+                                return !openshift.selector("bc", "banking-portal-api").exists();
+                              }
+                        }
+                  }
                 }
-        }
-        stage("OpenShift build") {
-            steps {
-                sh '''
-                       # Trigger a build from source code in the current directory using OpenShift ImageStream
-                       oc new-build --name=banking-portal-api --binary --strategy=docker -n priyanshubhargav710-dev
-                       oc start-build banking-portal-api --from-dir=./ --follow -n priyanshubhargav710-dev
-                   '''
-            }
-        }
+                steps {
+                  script {
+                        openshift.withCluster() {
+                              openshift.withProject() {
+                                openshift.newBuild("--name=banking-portal-api", "--image-stream=openjdk18-openshift:1.14-3", "--binary=true")
+                              }
+                        }
+                  }
+                }
+          }
+
 //         stage("Docker Build") {
 //             steps {
 //                  sh '''
@@ -81,5 +78,44 @@ pipeline {
 //                     '''
 //             }
 //         }
+
+        stage('Build Image') {
+            steps {
+                  sh "rm -rf ocp && mkdir -p ocp/deployments"
+                  sh "pwd && ls -la target "
+                  sh "cp target/openshiftjenkins-0.0.1-SNAPSHOT.jar ocp/deployments"
+
+                  script {
+                        openshift.withCluster() {
+                              openshift.withProject() {
+                                openshift.selector("bc", "sample-app-jenkins-new").startBuild("--from-dir=./ocp","--follow", "--wait=true")
+                              }
+                        }
+                  }
+            }
+        }
+
+                  stage('deploy') {
+                        when {
+                              expression {
+                                    openshift.withCluster() {
+                                      openshift.withProject() {
+                                        return !openshift.selector('dc', 'sample-app-jenkins-new').exists()
+                                      }
+                                    }
+                              }
+                        }
+                    steps {
+                      script {
+                            openshift.withCluster() {
+                              openshift.withProject() {
+                                def app = openshift.newApp("sample-app-jenkins-new", "--as-deployment-config")
+                                app.narrow("svc").expose();
+                              }
+                            }
+                      }
+                    }
+                  }
+
     }
 }

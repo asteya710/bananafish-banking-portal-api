@@ -15,12 +15,36 @@ pipeline {
         stage("Java Build"){
             steps {
                 script {
-                    echo "Building Maven project to generate .jar file..."
-                    sh '''
-                        # Ensure Maven is available in the Jenkins container
-                        mvn clean install -DskipTests
-                    '''
-                }
+                echo "Building Maven project to generate .jar file..."
+                   // Use OpenShift's Maven image to run the build
+                   sh '''
+                       oc run maven-build --image=maven:3.8.4-openjdk-11 --overrides='
+                       {
+                         "apiVersion": "v1",
+                         "kind": "Pod",
+                         "metadata": {
+                           "name": "maven-build"
+                         },
+                         "spec": {
+                           "containers": [{
+                             "name": "maven",
+                             "image": "maven:3.8.4-openjdk-11",
+                             "command": ["mvn", "clean", "install", "-DskipTests"],
+                             "workingDir": "/workspace",
+                             "volumeMounts": [{
+                               "mountPath": "/workspace",
+                               "name": "workspace-volume"
+                             }]
+                           }],
+                           "volumes": [{
+                             "name": "workspace-volume",
+                             "hostPath": {
+                               "path": "/tmp/workspace"  // Use workspace directory from Jenkins
+                             }
+                           }]
+                         }
+                       }'
+                       '''
             }
         }
         stage("OpenShift build") {

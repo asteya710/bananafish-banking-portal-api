@@ -1,7 +1,7 @@
 pipeline
     {
        agent {
-           docker {
+           any {
              image 'maven:3.8.6-jdk-11'  // Official Maven+JDK image
              args '-v $HOME/.m2:/root/.m2' // Cache Maven dependencies
            }

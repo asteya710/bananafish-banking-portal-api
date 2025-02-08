@@ -1,14 +1,27 @@
 pipeline
     {
        agent any
-       environment {
-           JAVA_HOME = '/usr/lib/jvm/java-17-openjdk' // Path to JDK
-         }
         stages
         {
           stage('Build App')
           {
-            steps
+            steps {
+              script {
+                sh '''
+                  oc create -f - <<EOF
+                  apiVersion: image.openshift.io/v1
+                  kind: ImageStream
+                  metadata:
+                    name: openjdk-17-ubi8
+                  spec:
+                    tags:
+                    - name: "1.17-3"
+                      from:
+                        kind: DockerImage
+                        name: registry.access.redhat.com/ubi8/openjdk-17:1.17-3
+                  EOF
+                '''
+              }
              {
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"

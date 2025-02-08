@@ -27,8 +27,8 @@ pipeline
               }
             }
              {
-             sh '${JAVA_HOME}/bin/java'
-             sh 'java -version' // Should show JDK 17
+             sh 'echo $JAVA_HOME'
+             sh '${JAVA_HOME}/bin/java -version'
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"
               git branch: 'develop', url: 'https://github.com/asteya710/bananafish-banking-portal-api.git'

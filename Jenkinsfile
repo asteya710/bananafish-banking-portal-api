@@ -11,6 +11,7 @@ pipeline
           {
             steps
              {
+             sh 'chmod +x $JAVA_HOME/bin/java'
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"
               git branch: 'develop', url: 'https://github.com/asteya710/bananafish-banking-portal-api.git'

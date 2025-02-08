@@ -1,12 +1,17 @@
 pipeline
     {
        agent any
+       environment {
+           JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64' // Path to JDK
+           PATH = "${JAVA_HOME}/bin:${env.PATH}"
+         }
         stages
         {
           stage('Build App')
           {
             steps
              {
+              sh 'java -version'
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"
               git branch: 'develop', url: 'https://github.com/asteya710/bananafish-banking-portal-api.git'

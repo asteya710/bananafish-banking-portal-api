@@ -11,7 +11,7 @@ pipeline
           {
             steps
              {
-             sh 'chmod +x /usr/lib/jvm/java-17-openjdk-amd64/bin/java'
+             sh 'chmod +x /usr/lib/jvm/java-17-openjdk-amd64'
              sh 'java -version'
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"

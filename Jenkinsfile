@@ -2,13 +2,12 @@ pipeline
     {
        agent any
          stages {
-           stage('Pre-Check') {
+           stage('Build') {
              steps {
                sh './mvnw clean install' // Uses project-specific Maven
              }
            }
          }
-        stages
         {
           stage('Build App')
           {

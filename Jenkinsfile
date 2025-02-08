@@ -22,6 +22,7 @@ pipeline
                   EOF
                 '''
               }
+            }
              {
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"

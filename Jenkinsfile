@@ -2,7 +2,7 @@ pipeline
     {
        agent any
        environment {
-        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk'
+        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
         }
         stages
         {
@@ -27,10 +27,8 @@ pipeline
               }
             }
              {
-             sh 'echo $JAVA_HOME'
-             sh '${JAVA_HOME}/bin/java -version'
              sh 'chmod +x mvnw'
-             sh "./mvnw clean install"
+             sh "./mvnw clean install -Dmaven.compiler.release=17"
               git branch: 'develop', url: 'https://github.com/asteya710/bananafish-banking-portal-api.git'
               script {
                   def pom = readMavenPom file: 'pom.xml'

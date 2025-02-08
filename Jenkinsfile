@@ -3,13 +3,14 @@ pipeline {
   /* environment {
     JAVA_HOME = '/usr/lib/jvm/java-17-openjdk' // Verify this path exists
   }
-  stages {
+
       stage('Check Java') {
         steps {
           sh 'echo "JAVA_HOME is set to: $JAVA_HOME"'
           sh 'java -version 2>&1' // Print Java version
         }
       } */
+      stages {
       stage('List Jenkins Tools JDKs') {
         steps {
           script {

@@ -1,6 +1,10 @@
 pipeline
     {
        agent any
+        environment {
+           // Replace with your OpenJDK 17 path
+           JAVA_HOME = '/usr/lib/jvm/java-17-openjdk'
+         }
         stages
         {
           stage('Build App')

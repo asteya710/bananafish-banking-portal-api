@@ -1,9 +1,11 @@
 pipeline
     {
-       agent {
-           any {
-             image 'maven:3.8.6-jdk-11'  // Official Maven+JDK image
-             args '-v $HOME/.m2:/root/.m2' // Cache Maven dependencies
+       agent any
+         stages {
+           stage('Pre-Check') {
+             steps {
+               sh './mvnw clean install' // Uses project-specific Maven
+             }
            }
          }
         stages

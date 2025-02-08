@@ -1,14 +1,20 @@
 pipeline
     {
        agent any
-         stages {
-           stage('Build') {
-             steps {
-               sh './mvnw clean install' // Uses project-specific Maven
-             }
-           }
-         }
+        stages
         {
+        stage('Build') {
+              steps {
+                script {
+                  // Create build config with Maven-enabled image
+                  openshift.newBuild(
+                    "--name=myapp",
+                    "--image-stream=openjdk-17-ubi8:1.17-3", // Has Maven
+                    "--binary=true"
+                  )
+                  }
+                  }
+                }
           stage('Build App')
           {
             steps

@@ -2,7 +2,7 @@ pipeline
     {
        agent any
        environment {
-           JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64' // Path to JDK
+           JAVA_HOME = '/usr/lib/jvm/java-17-openjdk' // Path to JDK
            PATH = "${JAVA_HOME}/bin:${env.PATH}"
          }
         stages
@@ -11,7 +11,7 @@ pipeline
           {
             steps
              {
-             sh 'chmod +x /usr/lib/jvm/java-17-openjdk-amd64'
+             sh 'chmod +x /usr/lib/jvm/java-17-openjdk'
              sh 'java -version'
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"

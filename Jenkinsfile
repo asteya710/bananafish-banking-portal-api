@@ -11,7 +11,7 @@ pipeline
           {
             steps
              {
-             sh 'chmod +x java'
+             sh 'chmod +x /usr/lib/jvm/java-17-openjdk-amd64/bin/java'
              sh 'java -version'
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"
@@ -36,7 +36,7 @@ pipeline
               script {
                 openshift.withCluster() {
                   openshift.withProject() {
-                    openshift.newBuild("--name=sample-app-jenkins-new", "--image-stream=openjdk18-openshift:1.14-3", "--binary=true")
+                    openshift.newBuild("--name=sample-app-jenkins-new", "--image-stream=openjdk-17-ubi8:1.17-3", "--binary=true")
                   }
                 }
               }

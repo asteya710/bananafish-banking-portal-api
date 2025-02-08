@@ -10,37 +10,8 @@ pipeline {
           sh 'java -version 2>&1' // Print Java version
         }
       } */
-      stages {
-      stage('List JDKs') {
-            steps {
-              script {
-                // Check JDKs in standard paths (Linux/Unix)
-                sh '''
-                  echo "Checking installed JDKs..."
-                  echo "--------------------------------------"
+    stages {
 
-                  # Check common JDK directories
-                  echo "JDKs in /usr/lib/jvm:"
-                  ls -d /usr/lib/jvm/* | grep -E 'java|jdk'
-                  echo "--------------------------------------"
-
-                  # Check alternatives (if available)
-                  if command -v update-alternatives &> /dev/null; then
-                    echo "Java alternatives:"
-                    update-alternatives --list java
-                  fi
-                  echo "--------------------------------------"
-
-                  # Check JAVA_HOME for all JDKs
-                  for jdk in $(ls -d /usr/lib/jvm/* | grep -E 'java|jdk'); do
-                    echo "Version for $jdk:"
-                    $jdk/bin/java -version 2>&1 || true
-                    echo "--------------------------------------"
-                  done
-                '''
-              }
-            }
-          }
     // Stage 1: Clone code and build the app
     stage('Build App') {
       steps {
@@ -65,6 +36,10 @@ pipeline {
                         kind: DockerImage
                         name: registry.access.redhat.com/ubi8/openjdk-17:1.17-3
                 ''')
+                      echo "ImageStream 'openjdk-17-ubi8' created successfully ✅"
+                      } else {
+                        // Print message if already exists
+                        echo "ImageStream 'openjdk-17-ubi8' already exists ⏩"
               }
             }
           }

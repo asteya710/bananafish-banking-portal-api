@@ -1,10 +1,9 @@
 pipeline
     {
        agent any
-        environment {
-           // Replace with your OpenJDK 17 path
-           JAVA_HOME = '/usr/lib/jvm/java-17-openjdk'
-         }
+        tools {
+            jdk 'jdk17'  // Name matches the JDK configured in Jenkins
+          }
         stages
         {
           stage('Build App')

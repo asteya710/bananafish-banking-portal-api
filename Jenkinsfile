@@ -36,10 +36,6 @@ pipeline {
                         kind: DockerImage
                         name: registry.access.redhat.com/ubi8/openjdk-17:1.17-3
                 ''')
-                      echo "ImageStream 'openjdk-17-ubi8' created successfully ✅"
-                      } else {
-                        // Print message if already exists
-                        echo "ImageStream 'openjdk-17-ubi8' already exists ⏩"
               }
             }
           }

@@ -1,6 +1,6 @@
 pipeline {
   agent any
-  environment {
+  /* environment {
     JAVA_HOME = '/usr/lib/jvm/java-17-openjdk' // Verify this path exists
   }
   stages {
@@ -8,6 +8,25 @@ pipeline {
         steps {
           sh 'echo "JAVA_HOME is set to: $JAVA_HOME"'
           sh 'java -version 2>&1' // Print Java version
+        }
+      } */
+      stage('List Jenkins Tools JDKs') {
+        steps {
+          script {
+            // List Jenkins-configured JDKs (replace 'jdk8', 'jdk11', etc.)
+            def jdkNames = ['jdk8', 'jdk11', 'jdk17'] // Names from Jenkins Global Tools
+            jdkNames.each { name ->
+              try {
+                def jdkPath = tool name // Get path from Jenkins tool configuration
+                sh """
+                  echo "Version for Jenkins JDK '$name':"
+                  ${jdkPath}/bin/java -version 2>&1
+                """
+              } catch (Exception e) {
+                echo "JDK '$name' is not configured in Jenkins."
+              }
+            }
+          }
         }
       }
     // Stage 1: Clone code and build the app

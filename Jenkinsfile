@@ -5,14 +5,15 @@ pipeline
         {
         stage('Build') {
               steps {
-                script {
-                  // Create build config with Maven-enabled image
-                  openshift.newBuild(
-                    "--name=myapp",
-                    "--image-stream=openjdk-17-ubi8:1.17-3", // Has Maven
-                    "--binary=true"
-                  )
+                steps {
+                  script {
+                    openshift.withCluster() {
+                      openshift.withProject() {
+                        openshift.newBuild("--name=banking-portal-api-new", "--image-stream=openjdk-17-ubi8:1.17-3", "--binary=true")
+                      }
+                    }
                   }
+                }
                   }
                 }
           stage('Build App')

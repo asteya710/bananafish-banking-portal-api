@@ -25,6 +25,7 @@ pipeline
             }
              {
              sh 'chmod +x mvnw'
+             sh "JAVA_HOME=${env.JAVA_HOME} ./mvnw clean install -Dmaven.compiler.source=17 -Dmaven.compiler.target=17"
              sh "./mvnw clean install"
               git branch: 'develop', url: 'https://github.com/asteya710/bananafish-banking-portal-api.git'
               script {

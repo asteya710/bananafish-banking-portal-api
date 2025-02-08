@@ -3,29 +3,16 @@ pipeline
        agent any
         stages
         {
-        stage('Build') {
-              steps {
-                steps {
-                  script {
-                    openshift.withCluster() {
-                      openshift.withProject() {
-                        openshift.newBuild("--name=banking-portal-api-new", "--image-stream=openjdk-17-ubi8:1.17-3", "--binary=true")
-                      }
-                    }
-                  }
-                }
-                  }
-                }
           stage('Build App')
           {
             steps
              {
+             sh "./mvnw clean install"
               git branch: 'develop', url: 'https://github.com/asteya710/bananafish-banking-portal-api.git'
               script {
                   def pom = readMavenPom file: 'pom.xml'
                   version = pom.version
               }
-              sh "mvn install"
             }
           }
           stage('Create Image Builder') {

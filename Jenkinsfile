@@ -3,7 +3,6 @@ pipeline
        agent any
        environment {
            JAVA_HOME = '/usr/lib/jvm/java-17-openjdk' // Path to JDK
-           PATH = "${JAVA_HOME}/bin:${env.PATH}"
          }
         stages
         {
@@ -11,7 +10,6 @@ pipeline
           {
             steps
              {
-             sh 'chmod +x $JAVA_HOME/bin/java'
              sh 'chmod +x mvnw'
              sh "./mvnw clean install"
               git branch: 'develop', url: 'https://github.com/asteya710/bananafish-banking-portal-api.git'
